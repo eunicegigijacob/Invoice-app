@@ -7,6 +7,7 @@ import invoiceSlice from "../redux/invoiceSlice";
 import formatDate from "../functions/formatDate";
 import DeleteModal from "./DeleteModal";
 import CreateInvoice from "./CreateInvoice";
+import { useState, useEffect } from "react";
 
 const InvoiceInfo = ({ onDelete }) => {
   const navigate = useNavigate();
@@ -64,6 +65,28 @@ const InvoiceInfo = ({ onDelete }) => {
             <div className=" mt-8 rounded-lg w-full flex items-center justify-between px-6 py-6 bg-white dark:bg-[#1e2139]">
               <div className=" flex space-x-2 justify-between md:justify-start md:w-auto w-full items-center">
                 <h1 className=" text-gray-600 dark:text-gray-400">Status</h1>
+                <div className="block lg:hidden flex justify-between gap-3">
+                  <button
+                    onClick={() => setIsEditOpen(true)}
+                    className="dark:bg-[#252945] hover:opacity-80 p-3 px-7 bg-slate-100  rounded-full"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="text-white bg-red-500 hover:opacity-80 p-3 px-7  rounded-full"
+                  >
+                    Delete
+                  </button>
+                  {invoice.status === "pending" && (
+                    <button
+                      onClick={onMakePaidClick}
+                      className=" ml-3 text-center  text-white bg-[#5d8cfa] p-3 px-7 hover:opacity-80  rounded-full"
+                    >
+                      Make as Paid
+                    </button>
+                  )}
+                </div>
                 <PaidStatus type={invoice.status} />
               </div>
               <div className=" md:block hidden">
@@ -82,7 +105,7 @@ const InvoiceInfo = ({ onDelete }) => {
                 {invoice.status === "pending" && (
                   <button
                     onClick={onMakePaidClick}
-                    className=" ml-3 text-center  text-white bg-[#7c5dfa] hover:opacity-80 p-3 px-7 rounded-full"
+                    className=" ml-3 text-center  text-white bg-[#5d9cfa] hover:opacity-80 p-3 px-7 rounded-full"
                   >
                     Make as Paid
                   </button>
@@ -156,12 +179,17 @@ const InvoiceInfo = ({ onDelete }) => {
                 {invoice.items.map((item) => (
                   <div className=" justify-between text-lg dark:text-white flex">
                     <h1>{item.name}</h1>
-                    <h1>£{item.total}</h1>
+                    <h1>
+                      {new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                      }).format(item.total)}
+                    </h1>
                   </div>
                 ))}
               </div>
 
-              <div className=" hidden sm:block mt-10 bg-[#f9fafe] dark:bg-[#252945] rounded-lg rounded-b-none space-y-4  p-10">
+              <div className=" lg:hidden block mt-10 bg-[#f9fafe] dark:bg-[#252945] rounded-lg rounded-b-none space-y-4  p-10">
                 {invoice.items.map((item) => (
                   <div key={item.name} className=" flex justify-around  ">
                     <div className=" space-y-4">
@@ -182,14 +210,20 @@ const InvoiceInfo = ({ onDelete }) => {
                       <p className=" text-gray-400 font-thin">Item price</p>
 
                       <h1 className=" dark:text-white text-base font-semibold">
-                        £{item.price}
+                        {new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                        }).format(item.price)}
                       </h1>
                     </div>
                     <div className=" space-y-4">
                       <p className=" text-gray-400 font-thin">Total</p>
 
                       <h1 className=" dark:text-white text-base font-semibold">
-                        £{item.total}
+                        {new Intl.NumberFormat("en-NG", {
+                          style: "currency",
+                          currency: "NGN",
+                        }).format(item.total)}
                       </h1>
                     </div>
                   </div>
@@ -198,7 +232,12 @@ const InvoiceInfo = ({ onDelete }) => {
               <div className=" p-10 font-semibold text-white rounded-lg rounded-t-none justify-between flex dark:bg-black bg-gray-700 ">
                 <h3 className=" text-xl ">Amount Due</h3>
 
-                <h1 className=" text-3xl">£{invoice.total}</h1>
+                <h1 className=" text-3xl">
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  }).format(invoice.total)}
+                </h1>
               </div>
             </div>
           </div>

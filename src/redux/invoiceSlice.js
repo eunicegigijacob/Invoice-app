@@ -97,6 +97,51 @@ const invoiceSlice = createSlice({
       };
       state.allInvoice.push(finalData);
     },
+    addDraft: (state, action) => {
+      const {
+        description,
+        paymentTerms,
+        clientName,
+        clientEmail,
+        senderStreet,
+        senderCity,
+        senderPostCode,
+        senderCountry,
+        clientStreet,
+        clientCity,
+        clientPostCode,
+        clientCountry,
+        item,
+      } = action.payload;
+
+      const finalData = {
+        id: `${generateID()}`,
+        createdAt: today,
+        paymentDue: getForwardDate(paymentTerms),
+        description: description,
+        paymentTerms: paymentTerms,
+        clientName: clientName,
+        clientEmail: clientEmail,
+        status: "Draft",
+        senderAddress: {
+          street: senderStreet,
+          city: senderCity,
+          postCode: senderPostCode,
+          country: senderCountry,
+        },
+        clientAddress: {
+          street: clientStreet,
+          city: clientCity,
+          postCode: clientPostCode,
+          country: clientCountry,
+        },
+        items: item,
+        total: item.reduce((acc, i) => {
+          return acc + Number(i.total);
+        }, 0),
+      };
+      state.allInvoice.push(finalData);
+    },
     editInvoice: (state, action) => {
       const { allInvoice } = state;
       const {
@@ -142,8 +187,8 @@ const invoiceSlice = createSlice({
 
       if (invoiceIndex !== -1) {
         allInvoice[invoiceIndex] = {
-          ...allInvoice[invoiceIndex] ,
-          ...edittedObject
+          ...allInvoice[invoiceIndex],
+          ...edittedObject,
         };
       }
     },

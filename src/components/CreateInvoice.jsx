@@ -4,6 +4,21 @@ import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
 import invoiceSlice from "../redux/invoiceSlice";
 import { useState } from "react";
+import {
+  validateSenderStreetAddress,
+  validateSenderPostCode,
+  validateSenderCity,
+  validateCLientEmail,
+  validateCLientName,
+  validateClientCity,
+  validateClientPostCode,
+  validateClientStreetAddress,
+  validateItemCount,
+  validateItemName,
+  validateItemPrice,
+  validateSenderCountry,
+  validateClientCountry,
+} from "../functions/createInvoiceValidator";
 
 const CreateInvoice = ({
   openCreateInvoice,
@@ -165,6 +180,28 @@ const CreateInvoice = ({
     return false;
   }
 
+  const saveDraft = () => {
+    dispatch(
+      invoiceSlice.actions.addDraft({
+        description,
+        paymentTerms,
+        clientName,
+        clientEmail,
+        senderStreet,
+        senderCity,
+        senderPostCode,
+        senderCountry,
+        clientStreet,
+        clientCity,
+        clientPostCode,
+        clientCountry,
+        item,
+      })
+    );
+    setOpenCreateInvoice(false);
+    dispatch(invoiceSlice.actions.filterInvoice({ status: filterValue }));
+  };
+
   return (
     <div
       onClick={(e) => {
@@ -208,7 +245,7 @@ const CreateInvoice = ({
                 id="senderStreet"
                 onChange={(e) => setSenderStreet(e.target.value)}
                 type="text"
-                className={`dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800 ${
+                className={`dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  border-gray-300 focus:outline-none  dark:border-gray-800 ${
                   isValidatorActive &&
                   !validateSenderStreetAddress(senderStreet) &&
                   " border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -222,7 +259,7 @@ const CreateInvoice = ({
                 type="text"
                 value={senderCity}
                 onChange={(e) => setSenderCity(e.target.value)}
-                className={`dark:bg-[#8c9296] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 border-gray-300 ${
+                className={`dark:bg-[#8c9296] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg   border-gray-300 ${
                   isValidatorActive &&
                   !validateSenderCity(senderCity) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -235,7 +272,7 @@ const CreateInvoice = ({
                 type="text"
                 value={senderPostCode}
                 onChange={(e) => setSenderPostCode(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg focus:outline-none  focus:outline-purple-400 border-gray-300 ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg focus:outline-none  border-gray-300 ${
                   isValidatorActive &&
                   !validateSenderPostCode(senderPostCode) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -248,7 +285,7 @@ const CreateInvoice = ({
                 type="text"
                 value={senderCountry}
                 onChange={(e) => setSenderCountry(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg  focus:outline-purple-400 ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] focus:outline-none  rounded-lg   ${
                   isValidatorActive &&
                   !validateSenderCountry(senderCountry) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -268,7 +305,7 @@ const CreateInvoice = ({
                 type="text"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  border-gray-300 focus:outline-none ${
                   isValidatorActive &&
                   !validateCLientName(clientName) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -282,7 +319,7 @@ const CreateInvoice = ({
                 type="text"
                 value={clientEmail}
                 onChange={(e) => setClientEmail(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg   border-gray-300 focus:outline-none ${
                   isValidatorActive &&
                   !validateCLientEmail(clientEmail) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -298,7 +335,7 @@ const CreateInvoice = ({
                 type="text"
                 value={clientStreet}
                 onChange={(e) => setClientStreet(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg   border-gray-300 focus:outline-none ${
                   isValidatorActive &&
                   !validateClientStreetAddress(clientStreet) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -312,7 +349,7 @@ const CreateInvoice = ({
                 type="text"
                 value={clientCity}
                 onChange={(e) => setClientCity(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  border-gray-300 focus:outline-none ${
                   isValidatorActive &&
                   !validateClientCity(clientCity) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -325,7 +362,7 @@ const CreateInvoice = ({
                 type="text"
                 value={clientPostCode}
                 onChange={(e) => setClientPostCode(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  border-gray-300 focus:outline-none ${
                   isValidatorActive &&
                   !validateClientPostCode(clientPostCode) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -338,7 +375,7 @@ const CreateInvoice = ({
                 type="text"
                 value={clientCountry}
                 onChange={(e) => setClientCountry(e.target.value)}
-                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none ${
+                className={` dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg   border-gray-300 focus:outline-none ${
                   isValidatorActive &&
                   !validateClientCountry(clientCountry) &&
                   "border-red-500 dark:border-red-500 outline-red-500 border-2"
@@ -354,7 +391,7 @@ const CreateInvoice = ({
                 type="date"
                 value={selectDeliveryDate}
                 onChange={(e) => setSelectDeliveryDate(e.target.value)}
-                className=" dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg  focus:outline-purple-400 border-gray-300 focus:outline-none  dark:border-gray-800 dark:text-white  mr-4"
+                className=" dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg   border-gray-300 focus:outline-none  dark:border-gray-800 dark:text-white  mr-4"
               />
             </div>
 
@@ -363,7 +400,7 @@ const CreateInvoice = ({
               <select
                 value={paymentTerms}
                 onChange={(e) => setpaymentTerms(e.target.value)}
-                className=" appearance-none w-full py-2 px-4 border-[.2px] rounded-lg focus:outline-none  dark:bg-[#8c9296] dark:text-white dark:border-gray-800  focus:outline-purple-400 border-gray-300 select-status"
+                className=" appearance-none w-full py-2 px-4 border-[.2px] rounded-lg focus:outline-none  dark:bg-[#8c9296] dark:text-white dark:border-gray-800  , border-gray-300 select-status"
               >
                 {deliveryTimes.map((time, index) => (
                   <option key={index} value={time.value}>
@@ -380,7 +417,7 @@ const CreateInvoice = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               type="text"
-              className=" dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg focus:outline-none   focus:outline-purple-400 border-gray-300 dark:border-gray-800 dark:text-white"
+              className=" dark:bg-[#8c9296] py-2 px-4 border-[.2px] rounded-lg focus:outline-none    border-gray-300 dark:border-gray-800 dark:text-white"
             />
           </div>
 
@@ -428,6 +465,17 @@ const CreateInvoice = ({
               className=" bg-gray-200  hover:opacity-80 mx-auto py-4 items-center dark:text-white  dark:bg-[#273f64] justify-center  px-8 rounded-full "
             >
               Discard
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                saveDraft();
+              }}
+              className=" bg-gray-200  hover:opacity-80 mx-auto py-4 items-center dark:text-white  dark:bg-[#010c1e] justify-center  px-8 rounded-full "
+            >
+              Save as draft
             </button>
           </div>
 
